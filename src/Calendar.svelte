@@ -1,37 +1,36 @@
 <script lang="ts">
-  import type { Day } from "./models/Day";
+  import { writable } from "svelte/store";
 
-  const currentDate: Date = new Date();
+  const selectedDate = new Date();
 
-  const weeks = getWeekAmount(
-    currentDate.getMonth() + 1,
-    currentDate.getFullYear()
+  const viewCurrentDate = writable(
+    `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
   );
 
-  const daysInMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0
-  ).getDate();
+  const daysInMonth = writable(
+    new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      0
+    ).getDate()
+  );
 
-  export const days: Day[] = [
-    { position: 0, name: `Monday` },
-    { position: 1, name: `Tuesday` },
-    { position: 2, name: `Wednesday` },
-    { position: 3, name: `Thursday` },
-    { position: 4, name: `Friday` },
-    { position: 5, name: `Saturday` },
-    { position: 6, name: `Sunday` },
+  export const days: string[] = [
+    `Monday`,
+    `Tuesday`,
+    `Wednesday`,
+    `Thursday`,
+    `Friday`,
+    `Saturday`,
+    `Sunday`,
   ];
 
   function startingPosition(dayIndex: number): string {
     const firstWeekDayOfTheMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
       1
     ).getDay();
-
-    console.log(firstWeekDayOfTheMonth);
 
     // In case of sunday, index 0
     if (firstWeekDayOfTheMonth === 0 && dayIndex === 1) {
@@ -45,23 +44,48 @@
     return "";
   }
 
-  function getWeekAmount(month: number, year: number): number {
-    var firstOfTheMonth = new Date(year, month - 1, 1);
-    var lastOfTheMonth = new Date(year, month, 0);
+  function SetDaysInMonth(): void {
+    daysInMonth.set(
+      new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth() + 1,
+        0
+      ).getDate()
+    );
+  }
 
-    var used = firstOfTheMonth.getDay() + lastOfTheMonth.getDate();
+  function nextMonth() {
+    selectedDate.setMonth(selectedDate.getMonth() + 1);
+    viewCurrentDate.set(
+      `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
+    );
+    SetDaysInMonth();
+  }
 
-    return Math.ceil(used / 7);
+  function previousMonth() {
+    selectedDate.setMonth(selectedDate.getMonth() + -1);
+    viewCurrentDate.set(
+      `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
+    );
+    SetDaysInMonth();
   }
 </script>
 
 <!-- style="grid-template-rows: repeat({weeks}, 1fr); -->
+<div id="calendar-info">
+  <div class="leftpicker" on:click={() => previousMonth()}>🥕</div>
+  <div class="currentMonthYear">
+    {$viewCurrentDate}
+  </div>
+  <div class="rightpicker" on:click={() => nextMonth()}>🥒</div>
+</div>
+
 <div id="calendar-container">
   {#each days as day}
-    <div class="day">{day.name}</div>
+    <div class="day">{day}</div>
   {/each}
 
-  {#each { length: daysInMonth } as _, dayIndex}
+  {#each { length: $daysInMonth } as _, dayIndex}
     <div class="day" style={startingPosition(dayIndex + 1)}>{dayIndex + 1}</div>
   {/each}
 </div>
@@ -71,12 +95,35 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
 
-    background: #999;
+    background: #eaeaea;
     height: 100%;
   }
+  #calendar-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 
+    color: #ffffff;
+    background: rgb(99, 108, 238);
+    height: 100%;
+    padding: 10px;
+  }
+  .currentMonthYear {
+    text-align: center;
+  }
+  .leftpicker {
+    justify-self: start;
+  }
+  .leftpicker:hover {
+    cursor: pointer;
+  }
+  .rightpicker {
+    justify-self: end;
+  }
+  .rightpicker:hover {
+    cursor: pointer;
+  }
   .day {
-    border: 1px solid #444444;
     padding: 20px;
+    border: 1px solid #dbdbdb;
   }
 </style>
