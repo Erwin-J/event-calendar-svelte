@@ -1,11 +1,9 @@
 <script lang="ts">
   import { writable } from "svelte/store";
+  import { viewCurrentDate } from "./calendar.store";
+  import { days } from "./utils/date.utils";
 
   const selectedDate = new Date();
-
-  const viewCurrentDate = writable(
-    `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
-  );
 
   const daysInMonth = writable(
     new Date(
@@ -15,24 +13,13 @@
     ).getDate()
   );
 
-  export const days: string[] = [
-    `Monday`,
-    `Tuesday`,
-    `Wednesday`,
-    `Thursday`,
-    `Friday`,
-    `Saturday`,
-    `Sunday`,
-  ];
-
-  function startingPosition(dayIndex: number): string {
+  $: test = (dayIndex: number) => {
     const firstWeekDayOfTheMonth = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
       1
     ).getDay();
 
-    // In case of sunday, index 0
     if (firstWeekDayOfTheMonth === 0 && dayIndex === 1) {
       return `grid-column-start: ${7};`;
     }
@@ -42,16 +29,32 @@
     }
 
     return "";
+  };
+
+  let style = "";
+
+  function setStartingPosition(dayIndex: number): void {
+    const firstWeekDayOfTheMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    ).getDay();
+
+    // In case of sunday, index 0
+    if (firstWeekDayOfTheMonth === 0 && dayIndex === 1) {
+      style = `grid-column-start: ${7};`;
+    }
+
+    if (dayIndex === 1) {
+      style = `grid-column-start: ${firstWeekDayOfTheMonth};`;
+    }
+
+    style = "";
   }
 
-  function SetDaysInMonth(): void {
-    daysInMonth.set(
-      new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth() + 1,
-        0
-      ).getDate()
-    );
+  function alaje(testa: number) {
+    console.log(testa);
+    return "";
   }
 
   function nextMonth() {
@@ -63,15 +66,24 @@
   }
 
   function previousMonth() {
-    selectedDate.setMonth(selectedDate.getMonth() + -1);
+    selectedDate.setMonth(selectedDate.getMonth() - 1);
     viewCurrentDate.set(
       `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
     );
     SetDaysInMonth();
   }
+
+  function SetDaysInMonth(): void {
+    daysInMonth.set(
+      new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth() + 1,
+        0
+      ).getDate()
+    );
+  }
 </script>
 
-<!-- style="grid-template-rows: repeat({weeks}, 1fr); -->
 <div id="calendar-info">
   <div class="leftpicker" on:click={() => previousMonth()}>🥕</div>
   <div class="currentMonthYear">
@@ -86,7 +98,9 @@
   {/each}
 
   {#each { length: $daysInMonth } as _, dayIndex}
-    <div class="day" style={startingPosition(dayIndex + 1)}>{dayIndex + 1}</div>
+    <div class="day" style={alaje(dayIndex + 1)}>
+      {dayIndex + 1}
+    </div>
   {/each}
 </div>
 

@@ -1,3 +1,7 @@
-import { writable } from "svelte/store";
+import { readable, writable } from "svelte/store";
 
-const currentDate = writable(new Date());
+const initialDate = new Date();
+
+export const viewCurrentDate = writable(
+  `${initialDate.getMonth() + 1}/${initialDate.getFullYear()}`
+);
