@@ -13,7 +13,7 @@
     ).getDate()
   );
 
-  $: test = (dayIndex: number) => {
+  const startingDayPosition = (dayIndex: number) => {
     const firstWeekDayOfTheMonth = new Date(
       selectedDate.getFullYear(),
       selectedDate.getMonth(),
@@ -31,33 +31,7 @@
     return "";
   };
 
-  let style = "";
-
-  function setStartingPosition(dayIndex: number): void {
-    const firstWeekDayOfTheMonth = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      1
-    ).getDay();
-
-    // In case of sunday, index 0
-    if (firstWeekDayOfTheMonth === 0 && dayIndex === 1) {
-      style = `grid-column-start: ${7};`;
-    }
-
-    if (dayIndex === 1) {
-      style = `grid-column-start: ${firstWeekDayOfTheMonth};`;
-    }
-
-    style = "";
-  }
-
-  function alaje(testa: number) {
-    console.log(testa);
-    return "";
-  }
-
-  function nextMonth() {
+  function nextMonth(): void {
     selectedDate.setMonth(selectedDate.getMonth() + 1);
     viewCurrentDate.set(
       `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
@@ -65,7 +39,7 @@
     SetDaysInMonth();
   }
 
-  function previousMonth() {
+  function previousMonth(): void {
     selectedDate.setMonth(selectedDate.getMonth() - 1);
     viewCurrentDate.set(
       `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
@@ -98,7 +72,10 @@
   {/each}
 
   {#each { length: $daysInMonth } as _, dayIndex}
-    <div class="day" style={alaje(dayIndex + 1)}>
+    <div
+      class="day"
+      style={$daysInMonth ? startingDayPosition(dayIndex + 1) : ""}
+    >
       {dayIndex + 1}
     </div>
   {/each}
