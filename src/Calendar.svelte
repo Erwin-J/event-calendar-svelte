@@ -1,12 +1,10 @@
 <script lang="ts">
   import { writable } from "svelte/store";
-  import { viewCurrentDate } from "./calendar.store";
+  import { scheduleDate, viewCurrentDate } from "./calendar.store";
   import Scheduler from "./Scheduler.svelte";
   import { days } from "./utils/date.utils";
 
   const selectedDate = new Date();
-  let scheduleDay: number;
-  let isVisible: boolean;
 
   const daysInMonth = writable(
     new Date(
@@ -19,7 +17,7 @@
   const startingDayPosition = (dayIndex: number) => {
     const firstWeekDayOfTheMonth = new Date(
       selectedDate.getFullYear(),
-      selectedDate.getMonth(),
+      selectedDate.getMonth() + 1,
       1
     ).getDay();
 
@@ -35,9 +33,13 @@
   };
 
   function dayClickedEvent(dayIndex: number) {
-    console.log(dayIndex);
-    scheduleDay = dayIndex;
-    isVisible = true;
+    scheduleDate.set(
+      new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth() + 1,
+        dayIndex
+      )
+    );
   }
 
   function isFirstDayOfTheMonth(dayIndex: number) {
@@ -100,7 +102,7 @@
     {/each}
   </div>
 </div>
-<Scheduler day={scheduleDay} schedulerVisible={isVisible} />
+<Scheduler />
 
 <style>
   #calendar-wrapper {

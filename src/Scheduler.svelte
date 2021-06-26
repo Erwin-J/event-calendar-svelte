@@ -1,46 +1,50 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  export let schedulerVisible: boolean;
-  export let day: number;
+  import { scheduleDate } from "./calendar.store";
 
-  function handleClickOutside() {
-    schedulerVisible = false;
+  $: $scheduleDate, showScheduler();
+  $: isVisible = false;
+
+  function showScheduler() {
+    if (!$scheduleDate) {
+      return;
+    }
+    isVisible = true;
+  }
+
+  function hideScheduler() {
+    isVisible = false;
+  }
+
+  function getEventCreationDate(): string {
+    if (!$scheduleDate) {
+      return;
+    }
+
+    return `${$scheduleDate.getDate()}/${$scheduleDate.getMonth()}/${$scheduleDate.getFullYear()}`;
   }
 </script>
 
-{#if schedulerVisible}
+{#if isVisible}
   <div id="calendar-scheduler" in:fade out:fade>
-    <h1>Create new event for day {day}</h1>
+    <h1>Create new event for {getEventCreationDate()}</h1>
     <form>
       <label for="eventName">Event Name:</label>
       <input type="text" id="eventName" name="eventName" />
       <br /><br />
       <label for="timeName">Time:</label>
-      <input
-        type="time"
-        id="appt"
-        name="timeName"
-        min="09:00"
-        max="18:00"
-        required
-      />
-      <input
-        type="time"
-        id="appt"
-        name="timeName"
-        min="09:00"
-        max="18:00"
-        required
-      />
+      <input type="time" id="appt" name="timeName" min="09:00" max="18:00" />
+      <input type="time" id="appt" name="timeName" min="09:00" max="18:00" />
       <br /><br />
-      <input type="submit" name="submit" value="Create Event" />
+      <button>Create Event</button>
+      <button on:click={() => hideScheduler()}>Cancel</button>
     </form>
   </div>
   <div
     class="scheduler-filler"
     in:fade
     out:fade
-    on:click={() => (schedulerVisible = false)}
+    on:click={() => hideScheduler()}
   />
 {/if}
 
@@ -52,7 +56,7 @@
     position: absolute;
     top: 0;
     width: 100%;
-    background: #ffffffe6;
+    background: #ffffff;
     height: 300px;
     border-bottom: 5px solid rgba(99, 108, 238, 0.5);
     text-align: center;
@@ -61,7 +65,7 @@
   .scheduler-filler {
     position: absolute;
     bottom: 0;
-    background: #ffffffe2;
+    background: #48484866;
     height: 100%;
     width: 100%;
     z-index: 95;
