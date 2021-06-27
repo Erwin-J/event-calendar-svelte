@@ -1,4 +1,4 @@
-import { readable, writable } from "svelte/store";
+import { writable } from "svelte/store";
 
 const startingDate = new Date();
 
@@ -28,10 +28,6 @@ export const daysInMonth = writable(
 export const scheduleDate = writable(<Date>null);
 
 export const eventsForMonth = writable(eventData);
-
-export const events = readable(() => {
-  return "";
-});
 
 export interface Event {
   eventName: string;

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { readable } from "svelte/store";
-
   import { selectedDate, eventsForMonth } from "./calendar.store";
 
   export let eventDayIndex: number;
