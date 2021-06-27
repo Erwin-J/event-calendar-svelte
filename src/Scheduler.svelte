@@ -21,7 +21,11 @@
       return;
     }
 
-    return `${$scheduleDate.getDate()}/${$scheduleDate.getMonth()}/${$scheduleDate.getFullYear()}`;
+    console.log($scheduleDate);
+
+    return `${$scheduleDate.getDate()}/${
+      $scheduleDate.getMonth() + 1
+    }/${$scheduleDate.getFullYear()}`;
   }
 </script>
 

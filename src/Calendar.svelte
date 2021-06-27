@@ -33,12 +33,9 @@
   };
 
   function dayClickedEvent(dayIndex: number) {
+    console.log(dayIndex);
     scheduleDate.set(
-      new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth() + 1,
-        dayIndex
-      )
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), dayIndex)
     );
   }
 
