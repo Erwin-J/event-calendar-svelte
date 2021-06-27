@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { readable } from "svelte/store";
+
   import { selectedDate, eventsForMonth } from "./calendar.store";
 
   export let eventDayIndex: number;
 
-  function getEvents(dayIndex: number) {
-    if (!dayIndex || !$eventsForMonth) {
+  $: getEvents = (dayIndex: number) => {
+    if (!dayIndex || !$eventsForMonth || !$selectedDate) {
       return;
     }
 
@@ -16,7 +18,7 @@
     );
 
     return eventsForSelectedDate;
-  }
+  };
 </script>
 
 {#each getEvents(eventDayIndex) as event}
