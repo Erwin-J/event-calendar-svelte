@@ -1,23 +1,18 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
-  import { scheduleDate, viewCurrentDate } from "./calendar.store";
+  import CalendarEvents from "./Calendar-Events.svelte";
+  import {
+    daysInMonth,
+    scheduleDate,
+    selectedDate,
+    viewCurrentDate,
+  } from "./calendar.store";
   import Scheduler from "./Scheduler.svelte";
   import { days } from "./utils/date.utils";
 
-  const selectedDate = new Date();
-
-  const daysInMonth = writable(
-    new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth() + 1,
-      0
-    ).getDate()
-  );
-
   const startingDayPosition = (dayIndex: number) => {
     const firstWeekDayOfTheMonth = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth() + 1,
+      $selectedDate.getFullYear(),
+      $selectedDate.getMonth() + 1,
       1
     ).getDay();
 
@@ -32,33 +27,49 @@
     return "";
   };
 
-  function dayClickedEvent(dayIndex: number) {
-    console.log(dayIndex);
+  function dayClickedEvent(dayIndex: number): void {
     scheduleDate.set(
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), dayIndex)
+      new Date($selectedDate.getFullYear(), $selectedDate.getMonth(), dayIndex)
     );
   }
 
-  function isFirstDayOfTheMonth(dayIndex: number) {
+  function isFirstDayOfTheMonth(dayIndex: number): boolean {
     return dayIndex === 1;
   }
 
-  function dayStartsAtSunday(firstWeekDayOfTheMonth: number, dayIndex: number) {
+  function dayStartsAtSunday(
+    firstWeekDayOfTheMonth: number,
+    dayIndex: number
+  ): boolean {
     return firstWeekDayOfTheMonth === 0 && dayIndex === 1;
   }
 
   function nextMonth(): void {
-    selectedDate.setMonth(selectedDate.getMonth() + 1);
+    selectedDate.set(
+      new Date(
+        $selectedDate.getFullYear(),
+        $selectedDate.getMonth() + 1,
+        $selectedDate.getDate()
+      )
+    );
+
     viewCurrentDate.set(
-      `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
+      `${$selectedDate.getMonth() + 1}/${$selectedDate.getFullYear()}`
     );
     SetDaysInMonth();
   }
 
   function previousMonth(): void {
-    selectedDate.setMonth(selectedDate.getMonth() - 1);
+    selectedDate.set(
+      new Date(
+        $selectedDate.getFullYear(),
+        $selectedDate.getMonth() - 1,
+        $selectedDate.getDate()
+      )
+    );
+
     viewCurrentDate.set(
-      `${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}`
+      `${$selectedDate.getMonth() + 1}/${$selectedDate.getFullYear()}`
     );
     SetDaysInMonth();
   }
@@ -66,8 +77,8 @@
   function SetDaysInMonth(): void {
     daysInMonth.set(
       new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth() + 1,
+        $selectedDate.getFullYear(),
+        $selectedDate.getMonth() + 1,
         0
       ).getDate()
     );
@@ -95,6 +106,7 @@
         on:click={() => dayClickedEvent(dayIndex + 1)}
       >
         {dayIndex + 1}
+        <svelte:component this={CalendarEvents} eventDayIndex={dayIndex + 1} />
       </div>
     {/each}
   </div>
@@ -141,6 +153,7 @@
   }
   .day-cell:hover {
     background: #b1b1b1;
+    cursor: pointer;
   }
   .day {
     padding: 20px;

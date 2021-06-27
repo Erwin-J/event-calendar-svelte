@@ -21,8 +21,6 @@
       return;
     }
 
-    console.log($scheduleDate);
-
     return `${$scheduleDate.getDate()}/${
       $scheduleDate.getMonth() + 1
     }/${$scheduleDate.getFullYear()}`;
