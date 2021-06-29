@@ -7,8 +7,10 @@ Exploring the Svelte framework while in the progress of creating a calendar.
 * Basic calendar view (days per month, switch month)
 * Click on a date for event creation popup (not able to plan events yet)
 * Show events on the calendar as example
+* Very basic event can be created
 
 Please note that no optimization is done yet as this is for learning purposes.
+This will be improved over time!
 
 **Run locally:** 
 * npm i (once)
