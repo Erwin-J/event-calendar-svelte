@@ -10,6 +10,7 @@ Exploring the Svelte framework while in the progress of creating a calendar.
 * Very basic event can be created
 
 Please note that no optimization is done yet as this is for learning purposes.
+
 This will be improved over time!
 
 **Run locally:** 
