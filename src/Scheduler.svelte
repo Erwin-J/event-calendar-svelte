@@ -1,9 +1,13 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { scheduleDate } from "./calendar.store";
+  import { createNewEvent, scheduleDate } from "./calendar.store";
 
   $: $scheduleDate, showScheduler();
   $: isVisible = false;
+
+  let eventName: string = "";
+  let startTime: string;
+  let endTime: string;
 
   function showScheduler() {
     if (!$scheduleDate) {
@@ -12,11 +16,53 @@
     isVisible = true;
   }
 
-  function hideScheduler() {
+  function createEvent() {
+    let splitStartTime: string[];
+    let splitEndTime: string[];
+
+    if (!startTime) {
+      splitStartTime = ["0", "0"];
+    } else {
+      splitStartTime = startTime.split(":");
+    }
+
+    if (!endTime) {
+      splitEndTime = ["0", "0"];
+    } else {
+      splitEndTime = endTime.split(":");
+    }
+
+    const startDateTime = new Date(
+      $scheduleDate.getFullYear(),
+      $scheduleDate.getMonth(),
+      $scheduleDate.getDate(),
+      +splitStartTime[0],
+      +splitStartTime[1]
+    );
+    const endDateTime = new Date(
+      $scheduleDate.getFullYear(),
+      $scheduleDate.getMonth(),
+      $scheduleDate.getDate(),
+      +splitEndTime[0],
+      +splitEndTime[1]
+    );
+
+    createNewEvent({
+      eventName: eventName,
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
+    });
+    clearScheduler();
+  }
+
+  function clearScheduler() {
+    eventName = "";
+    startTime = "";
+    endTime = "";
     isVisible = false;
   }
 
-  function getEventCreationDate(): string {
+  function eventCreationDate(): string {
     if (!$scheduleDate) {
       return;
     }
@@ -29,24 +75,22 @@
 
 {#if isVisible}
   <div id="calendar-scheduler" in:fade out:fade>
-    <h1>Create new event for {getEventCreationDate()}</h1>
-    <form>
-      <label for="eventName">Event Name:</label>
-      <input type="text" id="eventName" name="eventName" />
-      <br /><br />
-      <label for="timeName">Time:</label>
-      <input type="time" id="appt" name="timeName" min="09:00" max="18:00" />
-      <input type="time" id="appt" name="timeName" min="09:00" max="18:00" />
-      <br /><br />
-      <button>Create Event</button>
-      <button on:click={() => hideScheduler()}>Cancel</button>
-    </form>
+    <h1>Create new event for {eventCreationDate()}</h1>
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" bind:value={eventName} />
+    <br /><br />
+    <label for="timeName">Time:</label>
+    <input type="time" id="appt" bind:value={startTime} />
+    <input type="time" id="appt" bind:value={endTime} />
+    <br /><br />
+    <button on:click={() => createEvent()}>Create Event</button>
+    <button on:click={() => clearScheduler()}>Cancel</button>
   </div>
   <div
     class="scheduler-filler"
     in:fade
     out:fade
-    on:click={() => hideScheduler()}
+    on:click={() => clearScheduler()}
   />
 {/if}
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import CalendarEvents from "./Calendar-Events.svelte";
   import {
     daysInMonth,
     scheduleDate,
@@ -8,6 +7,7 @@
   } from "./calendar.store";
   import Scheduler from "./Scheduler.svelte";
   import { days } from "./utils/date.utils";
+  import CalendarEvents from "./Calendar-Events.svelte";
 
   const startingDayPosition = (dayIndex: number) => {
     const firstWeekDayOfTheMonth = new Date(

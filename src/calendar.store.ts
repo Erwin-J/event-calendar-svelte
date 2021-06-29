@@ -3,11 +3,24 @@ import { writable } from "svelte/store";
 const startingDate = new Date();
 
 const eventData: Event[] = [
-  { eventName: "Example Event", dateWithTime: new Date() },
-  { eventName: "Another Event", dateWithTime: new Date() },
+  {
+    eventName: "Example Event",
+    startDateTime: new Date(),
+    endDateTime: new Date(),
+  },
+  {
+    eventName: "Another Event",
+    startDateTime: new Date(),
+    endDateTime: new Date(),
+  },
   {
     eventName: "Yet another Event",
-    dateWithTime: new Date(
+    startDateTime: new Date(
+      startingDate.getFullYear(),
+      startingDate.getMonth() + 1,
+      5
+    ),
+    endDateTime: new Date(
       startingDate.getFullYear(),
       startingDate.getMonth() + 1,
       5
@@ -29,7 +42,15 @@ export const scheduleDate = writable(<Date>null);
 
 export const eventsForMonth = writable(eventData);
 
+export const createNewEvent = (event: Event) => {
+  eventsForMonth.update((e) => {
+    e.push(event);
+    return e;
+  });
+};
+
 export interface Event {
   eventName: string;
-  dateWithTime: Date;
+  startDateTime: Date;
+  endDateTime: Date;
 }
